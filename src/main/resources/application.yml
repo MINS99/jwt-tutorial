@@ -22,3 +22,6 @@ spring:
 logging:
   level:
     com.practice: DEBUG
+
+jwt:
+  secret: c3ByaW5nLWJvb3Qtand0LXR1dG9yaWFsLXNlY3JldC1zcHJpbmctYm9vdC1qd3QtdHV0b3JpYWwtc2VjcmV0LXNwcmluZy1ib290LWp3dC10dXRvcmlhbC1zZWNyZXQK
