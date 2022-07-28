@@ -13,29 +13,6 @@
 ## IntelliJ에서 Lombok 사용시 설정 사항
 + Preferences > Annotation Processors 검색 > Enable annotation processing 활성화
 
-## @EnableWebSecurity
-+ config/SecurityConfig.class
-+ 기본적인 Web 보안을 활성화하기 위한 어노테이션
-+ 추가적인 설정이 필요한 경우 `WebSecurityConfigurer`를 implements 하거나 `WebSecurityConfigurerAdapter`를 extends 함
-  + 강의에서는 `WebSecurityConfigurerAdapter`를 extends 했으나 Spring Boot 버전이 업그레이드 되면서 해당 클래스가 deprecated 됨
-    + HttpSecurity에 대한 configure → `SecurityFilterChain`를 `@Bean`으로 등록
-    + WebSecurity에 대한 configure → `WebSecurityCustomizer`를 `@Bean`으로 등록
-+ 참고 
-  + [Deprecated된 WebSecurityConfigurerAdapter, 어떻게 대처하지?](https://velog.io/@pjh612/Deprecated%EB%90%9C-WebSecurityConfigurerAdapter-%EC%96%B4%EB%96%BB%EA%B2%8C-%EB%8C%80%EC%B2%98%ED%95%98%EC%A7%80#httpsecurity-configure)
-  + [[Spring Security] Config Refactoring](https://velog.io/@csh0034/Spring-Security-Config-Refactoring)
-
-## @EnableGlobalMethodSecurity
-+ config/SecurityConfig
-+ MethodSecurity : 메소드 수준에서 권한을 제어할 수 있도록 하는 어노테이션
-+ `@EnableGlobalMethodSecurity(prePostEnabled = true)` 와 같이 옵션 추가 가능
-  + prePostEnabled : Spring Security의 @PreAuthorize, @PreFilter, @PostAuthorize, @PostFilter어노테이션 활성화 여부
-  + securedEnabled : @Secured 어노테이션 활성화 여부
-  + jsr250Enabled : @RoleAllowed 어노테이션 사용 활성화 여부
-+ @Secured("ROLE_ADMIN") 는 @PreAuthorize("hasRole('ROLE_ADMIN')") 과 동일한 의미
-  + hasRole, hasAnyRole은 기본적으로 제공하는 메서드로 관련 내용은 [여기를 참고](https://docs.spring.io/spring-security/site/docs/3.0.x/reference/el-access.html#el-common-built-in)
-+ 참고
-  + [Spring Security @PreAuthorize 사용하기](https://gaemi606.tistory.com/entry/Spring-Boot-Spring-Security-PreAuthorize%EC%82%AC%EC%9A%A9%ED%95%98%EA%B8%B0)
-
 ## JWT 와 Security 설정
 + `TokenProvider` : 유저 정보로 JWT 토큰을 만들거나 토큰을 바탕으로 유저 정보를 가져옴
 + `JwtFilter` : Spring Request 앞단에 붙일 Custom Filter
@@ -46,6 +23,36 @@
 + `SecurityUtil` : jwtFilter 에서 SecurityContext 에 세팅한 유저 정보를 꺼냄
 
 + 각 설정에 대한 설명은 [여기를 참고](https://bcp0109.tistory.com/301)
+
+## SecurityConfig
+### @EnableWebSecurity
++ 기본적인 Web 보안을 활성화하기 위한 어노테이션
++ 추가적인 설정이 필요한 경우 `WebSecurityConfigurer`를 implements 하거나 `WebSecurityConfigurerAdapter`를 extends 함
+  + 강의에서는 `WebSecurityConfigurerAdapter`를 extends 했으나 Spring Boot 버전이 업그레이드 되면서 해당 클래스가 deprecated 됨
+    + HttpSecurity에 대한 configure → `SecurityFilterChain`를 `@Bean`으로 등록
+    + WebSecurity에 대한 configure → `WebSecurityCustomizer`를 `@Bean`으로 등록
++ 참고
+  + [Deprecated된 WebSecurityConfigurerAdapter, 어떻게 대처하지?](https://velog.io/@pjh612/Deprecated%EB%90%9C-WebSecurityConfigurerAdapter-%EC%96%B4%EB%96%BB%EA%B2%8C-%EB%8C%80%EC%B2%98%ED%95%98%EC%A7%80#httpsecurity-configure)
+  + [[Spring Security] Config Refactoring](https://velog.io/@csh0034/Spring-Security-Config-Refactoring)
+
+### @EnableGlobalMethodSecurity
++ MethodSecurity : 메소드 수준에서 권한을 제어할 수 있도록 하는 어노테이션
++ `@EnableGlobalMethodSecurity(prePostEnabled = true)` 와 같이 옵션 추가 가능
+  + prePostEnabled : Spring Security의 @PreAuthorize, @PreFilter, @PostAuthorize, @PostFilter어노테이션 활성화 여부
+  + securedEnabled : @Secured 어노테이션 활성화 여부
+  + jsr250Enabled : @RoleAllowed 어노테이션 사용 활성화 여부
++ @Secured("ROLE_ADMIN") 는 @PreAuthorize("hasRole('ROLE_ADMIN')") 과 동일한 의미
+  + hasRole, hasAnyRole은 기본적으로 제공하는 메서드로 관련 내용은 [여기를 참고](https://docs.spring.io/spring-security/site/docs/3.0.x/reference/el-access.html#el-common-built-in)
++ 참고
+  + [Spring Security @PreAuthorize 사용하기](https://gaemi606.tistory.com/entry/Spring-Boot-Spring-Security-PreAuthorize%EC%82%AC%EC%9A%A9%ED%95%98%EA%B8%B0)
+
+### PasswordEncoder
++ 회원의 패스워드와 관련되어 암호화 하는 클래스
+  1. 평문으로 입력받은 패스워드 정보를 UserService에서 User 객체 생성시 `passwordEncoder.encode()`를 통해 암호화하여 저장
+  2. PasswordEncoder의 경우 자동 빈 주입이 되지 않고 BCryptPasswordEncoder를 Super Class로 한 Class가 필요함
+  3. SecurityConfig에서 빈 주입 로직 추가
++ 참고
+  + [PasswordEncoder that could not be found](https://thalals.tistory.com/301)
 
 ## 이슈 사항
 ### 1. DB table 생성이 정상적으로 되지 않음
